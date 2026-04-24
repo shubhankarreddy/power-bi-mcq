@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Power BI MCQ - Skills Assessment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:#f2c811; --primary-dark:#c79d00; --primary-light:#fff8d6;
+      --accent:#243a73; --accent-light:#e9eefb; --green:#10b981; --red:#ef4444;
+      --surface:#fff; --bg:#f7f4df; --border:#e6d98b; --text:#1f2937; --muted:#64748b;
+      --shadow:0 2px 8px rgba(0,0,0,.08); --shadow-md:0 4px 16px rgba(0,0,0,.12);
+      --radius:10px; --font-body:'DM Sans',sans-serif; --font-head:'Bitter',serif; --font-mono:'JetBrains Mono',monospace;
+    }
+    [data-theme="dark"] {
+      --surface:#1f2937; --bg:#0f172a; --border:#4b4318; --text:#f8fafc; --muted:#94a3b8;
+      --primary-light:#2f2605; --accent-light:#17213d;
+    }
+    body { font-family:var(--font-body); background:var(--bg); color:var(--text); min-height:100vh; font-size:15px; line-height:1.6; }
+    .topbar { height:56px; padding:0 24px; background:linear-gradient(90deg,#1f2937,#243a73); color:#fff; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10; box-shadow:0 2px 8px rgba(0,0,0,.22); }
+    .brand { display:flex; align-items:center; gap:10px; font-family:var(--font-head); font-weight:700; }
+    .logo { width:32px; height:32px; border-radius:6px; background:var(--primary); color:#1f2937; display:grid; place-items:center; font-weight:800; }
+    .top-right { display:flex; align-items:center; gap:12px; }
+    .pill { font-size:.82rem; background:rgba(255,255,255,.14); padding:4px 10px; border-radius:20px; }
+    .theme-btn { background:rgba(255,255,255,.14); color:#fff; border:0; border-radius:6px; padding:6px 10px; cursor:pointer; }
+    .level-bar { display:flex; justify-content:center; gap:12px; padding:20px 20px 0; flex-wrap:wrap; }
+    .level-tab { background:var(--surface); border:2px solid var(--border); border-radius:10px; padding:11px 24px; color:var(--muted); font-weight:700; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; }
+    .level-tab:hover, .level-tab.active { border-color:var(--primary-dark); color:#7a5d00; background:var(--primary-light); }
+    [data-theme="dark"] .level-tab:hover, [data-theme="dark"] .level-tab.active { color:#facc15; }
+    .badge { font-family:var(--font-mono); font-size:.72rem; background:var(--border); color:var(--muted); padding:2px 8px; border-radius:20px; }
+    .level-tab.active .badge, .level-tab.done .badge { background:var(--primary); color:#1f2937; }
+    .main { max-width:900px; margin:20px auto; padding:0 20px 60px; }
+    .progress-wrap, .question-card, .results { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); }
+    .progress-wrap { padding:16px 20px; margin-bottom:16px; }
+    .progress-head { display:flex; justify-content:space-between; margin-bottom:10px; }
+    .progress-label { font-size:.85rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+    .progress-count { font-family:var(--font-mono); color:#7a5d00; font-weight:700; }
+    .bar { height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+    .bar > div { height:100%; background:linear-gradient(90deg,var(--primary),#f59e0b); transition:width .25s; }
+    .dots { display:flex; flex-wrap:wrap; gap:5px; margin-top:12px; }
+    .dot { width:20px; height:20px; border-radius:50%; background:var(--border); border:2px solid transparent; cursor:pointer; }
+    .dot.current { border-color:var(--accent); background:var(--accent-light); }
+    .dot.correct { background:var(--green); } .dot.wrong { background:var(--red); } .dot.skipped { background:#f59e0b; }
+    .question-card { padding:28px; animation:fade .2s ease; }
+    @keyframes fade { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
+    .q-meta { display:flex; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    .topic { color:#7a5d00; background:var(--primary-light); font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.05em; padding:3px 10px; border-radius:20px; }
+    [data-theme="dark"] .topic { color:#facc15; }
+    .q-num { font-family:var(--font-mono); color:var(--muted); font-size:.82rem; }
+    .q-text { font-size:1.04rem; font-weight:600; margin-bottom:22px; }
+    code { font-family:var(--font-mono); font-size:.88em; background:var(--bg); border:1px solid var(--border); padding:1px 5px; border-radius:4px; color:#7a5d00; }
+    .options { display:flex; flex-direction:column; gap:10px; }
+    .option { display:flex; gap:12px; align-items:flex-start; width:100%; text-align:left; padding:12px 14px; border:2px solid var(--border); background:var(--bg); color:var(--text); border-radius:8px; cursor:pointer; font-family:var(--font-body); font-size:.94rem; line-height:1.5; }
+    .option:hover:not(:disabled) { border-color:var(--primary-dark); background:var(--primary-light); }
+    .letter { flex:0 0 24px; height:24px; border-radius:50%; display:grid; place-items:center; background:var(--border); color:var(--muted); font-family:var(--font-mono); font-size:.78rem; font-weight:800; margin-top:2px; }
+    .option.correct { border-color:var(--green); background:#ecfdf5; color:#064e3b; }
+    .option.wrong { border-color:var(--red); background:#fef2f2; color:#7f1d1d; }
+    .option.correct .letter { background:var(--green); color:#fff; } .option.wrong .letter { background:var(--red); color:#fff; }
+    .option:disabled { cursor:default; }
+    .feedback { display:none; margin-top:16px; padding:14px 18px; border-radius:8px; font-size:.9rem; }
+    .feedback.show { display:block; } .feedback.good { border-left:4px solid var(--green); background:#ecfdf5; color:#166534; } .feedback.bad { border-left:4px solid var(--red); background:#fef2f2; color:#991b1b; }
+    .actions { display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-top:20px; }
+    .btn { border:2px solid transparent; border-radius:8px; padding:10px 22px; font-weight:800; cursor:pointer; font-family:var(--font-body); }
+    .btn-primary { background:var(--accent); color:#fff; } .btn-primary:hover { background:#172554; }
+    .btn-secondary { background:transparent; color:var(--muted); border-color:var(--border); } .btn-secondary:hover { color:var(--accent); border-color:var(--accent); }
+    .btn:disabled { opacity:.45; cursor:not-allowed; }
+    .results { display:none; text-align:center; padding:40px 28px; box-shadow:var(--shadow-md); }
+    .results.show { display:block; }
+    .score-ring { width:132px; height:132px; border-radius:50%; border:8px solid var(--green); display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto 20px; }
+    .score-ring.avg { border-color:#f59e0b; } .score-ring.low { border-color:var(--red); }
+    .score { font-family:var(--font-head); font-size:2.2rem; font-weight:800; color:var(--accent); line-height:1; }
+    .denom, .results-msg { color:var(--muted); }
+    .results-title { font-family:var(--font-head); font-size:1.55rem; margin-bottom:8px; }
+    .breakdown { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin:24px 0; }
+    .bi { background:var(--bg); border:1px solid var(--border); border-radius:8px; min-width:90px; padding:12px 18px; }
+    .bi-num { font-family:var(--font-mono); font-size:1.4rem; font-weight:800; }
+    .bi-label { font-size:.76rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+    .topic-review { max-height:320px; overflow:auto; margin-top:20px; text-align:left; }
+    .topic-row { display:flex; justify-content:space-between; gap:12px; padding:8px 10px; border-radius:6px; font-size:.87rem; }
+    .topic-row:nth-child(even) { background:var(--bg); }
+    @media (max-width:640px) { .question-card { padding:20px 16px; } .topbar { padding:0 14px; } .pill.hide-sm { display:none; } .level-tab { padding:9px 14px; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><div class="logo">PBI</div><span>Power BI MCQ - Skills Assessment</span></div>
+    <div class="top-right">
+      <div class="pill">Score <strong id="global-score">0 / 0</strong></div>
+      <div class="pill hide-sm">Streak <strong id="global-streak">0</strong></div>
+      <button class="theme-btn" onclick="toggleTheme()">Dark</button>
+    </div>
+  </header>
+
+  <div class="level-bar">
+    <button class="level-tab active" id="tab-b1" onclick="switchLevel('b1')">Basic<span class="badge">B1</span></button>
+    <button class="level-tab" id="tab-b2" onclick="switchLevel('b2')">Intermediate<span class="badge">B2</span></button>
+    <button class="level-tab" id="tab-b3" onclick="switchLevel('b3')">Advanced<span class="badge">B3</span></button>
+  </div>
+
+  <main class="main">
+    <section class="progress-wrap">
+      <div class="progress-head"><span class="progress-label" id="level-label">Basic - B1</span><span class="progress-count" id="q-count">1 / 25</span></div>
+      <div class="bar"><div id="progress-bar" style="width:4%"></div></div>
+      <div class="dots" id="progress-dots"></div>
+    </section>
+
+    <section class="question-card" id="question-card">
+      <div class="q-meta"><span class="topic" id="q-topic">Topic</span><span class="q-num" id="q-num">Q1</span></div>
+      <p class="q-text" id="q-text">Loading...</p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="actions">
+        <button class="btn btn-secondary" id="btn-skip" onclick="skipQuestion()">Skip</button>
+        <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()" disabled>Next</button>
+      </div>
+    </section>
+
+    <section class="results" id="results">
+      <div class="score-ring" id="score-ring"><div class="score" id="result-score">0</div><div class="denom" id="result-denom">/ 25</div></div>
+      <h2 class="results-title" id="results-title">Level Complete</h2>
+      <p class="results-msg" id="results-msg"></p>
+      <div class="breakdown">
+        <div class="bi"><div class="bi-num" id="res-correct">0</div><div class="bi-label">Correct</div></div>
+        <div class="bi"><div class="bi-num" id="res-wrong">0</div><div class="bi-label">Wrong</div></div>
+        <div class="bi"><div class="bi-num" id="res-skipped">0</div><div class="bi-label">Skipped</div></div>
+      </div>
+      <div class="actions" style="justify-content:center">
+        <button class="btn btn-secondary" onclick="retryLevel()">Retry</button>
+        <button class="btn btn-primary" id="btn-next-level" onclick="nextLevel()">Next Level</button>
+      </div>
+      <div class="topic-review" id="topic-breakdown"></div>
+    </section>
+  </main>
+
+  <script>
+const questions = {
+  b1: [
+    {topic:"Introduction to Power BI", q:"A retail manager wants one place to combine sales data, create interactive charts, and share insights with store leaders. What best describes Power BI in this situation?", opts:["A spreadsheet formula library","A database engine that replaces SQL Server","A business intelligence platform for modelling, visualising, and sharing data","A programming language for dashboards"], ans:2, explain:"Power BI is used to connect to data, model it, build interactive reports, and share insights through the Power BI service. It does not replace the source database or act as a programming language."},
+    {topic:"Introduction to Power BI", q:"Which Power BI item is a multi-page interactive canvas usually built in Power BI Desktop?", opts:["Report","Dashboard","Workspace","Gateway"], ans:0, explain:"A report contains one or more pages of visuals and interactions. A dashboard is a single-page canvas in the Power BI service, usually made from pinned tiles."},
+    {topic:"Introduction to Power BI", q:"Before building a KPI report for executives, what is the best first step?", opts:["Choose every available chart type","Import all company data into one table","Start with custom visuals","Clarify the business questions, audience, and success metrics"], ans:3, explain:"Good BI starts with the decision the report should support. Clarifying audience and metrics prevents noisy dashboards and irrelevant visuals."},
+
+    {topic:"Power BI Desktop Overview", q:"In Power BI Desktop, which view is mainly used to arrange visuals on report pages?", opts:["Model view","Report view","Power Query Editor","Data source settings"], ans:1, explain:"Report view is where visuals are placed and formatted. Model view is for relationships, and Power Query Editor is for data preparation."},
+    {topic:"Power BI Desktop Overview", q:"A model has Sales, Customers, Products, and Calendar tables. Where would you visually inspect and edit relationships between these tables?", opts:["Report view","Format pane","Model view","Performance analyzer only"], ans:2, explain:"Model view shows tables, relationships, cardinality, and filter direction, making it the right place to inspect the semantic model."},
+
+    {topic:"Connecting to Data Sources", q:"A report must refresh every morning from an on-premises SQL Server database after it is published. What component is normally required?", opts:["A slicer","A pie chart","A bookmark","An on-premises data gateway"], ans:3, explain:"The on-premises data gateway lets the Power BI service securely reach on-premises data sources for scheduled refresh or DirectQuery."},
+    {topic:"Connecting to Data Sources", q:"For a small monthly Excel file that does not need real-time query execution, which connection mode is typically simplest?", opts:["Import","DirectQuery","Live connection to Analysis Services only","Composite model only"], ans:0, explain:"Import stores a copy of the data in the semantic model and is usually simplest and fastest for small or moderate static files."},
+    {topic:"Connecting to Data Sources", q:"A compliance dashboard must query a large cloud warehouse without storing detailed rows in Power BI. Which mode is most aligned with that requirement?", opts:["Import every row","Manual copy and paste","DirectQuery","Export to PDF"], ans:2, explain:"DirectQuery leaves detailed data in the source and sends queries back to it. It can help when data volume or storage policy makes Import unsuitable."},
+
+    {topic:"Importing Data (Excel, CSV, Web)", q:"You need to load a named Excel table called Sales_2026 into Power BI Desktop. Which action is most appropriate?", opts:["Rename the file extension to .pbix","Use Get Data -> Excel and select the table","Paste the table as an image","Use Manage Relationships before connecting"], ans:1, explain:"Get Data -> Excel lets you choose sheets or named tables. Loading a named table is more reliable than selecting arbitrary worksheet ranges."},
+    {topic:"Importing Data (Excel, CSV, Web)", q:"A CSV file contains dates and currency values. What should you verify immediately after import?", opts:["Chart title font","Bookmark order","Column data types and locale interpretation","Workspace role"], ans:2, explain:"CSV files do not carry rich metadata. Checking data types and locale prevents dates, decimals, and currency values from being misread."},
+
+    {topic:"Basic Data Transformations", q:"In Power Query, a source column has values like 'North - Wholesale'. You need Region and Channel as separate columns. Which transformation fits?", opts:["Remove duplicates","Transpose table","Create a slicer","Split Column by delimiter"], ans:3, explain:"Split Column by delimiter can separate text around the hyphen into two usable fields. This is a data preparation step, not a report visual step."},
+    {topic:"Basic Data Transformations", q:"A query has test rows where OrderID is blank. What is the best Power Query action before loading the model?", opts:["Hide the visual","Remove or filter out blank OrderID rows","Change report theme","Use a pie chart"], ans:1, explain:"Cleaning invalid rows in Power Query improves model quality before analysis. Hiding visuals does not fix bad data."},
+    {topic:"Basic Data Transformations", q:"Power Query records each cleanup action under Applied Steps. Why is this useful?", opts:["It turns visuals into dashboards","It disables scheduled refresh","It makes transformations repeatable on refresh","It stores user passwords"], ans:2, explain:"Applied Steps are replayed when the query refreshes, so the same cleanup process is applied to new data."},
+
+    {topic:"Creating Basic Visualisations", q:"A sales director wants to see monthly revenue trend over the last 12 months. Which visual is usually the clearest starting point?", opts:["Pie chart","Line chart","Card only","Table with no sorting"], ans:1, explain:"A line chart is well suited for time-series trends. Pie charts are poor for showing movement over time."},
+    {topic:"Creating Basic Visualisations", q:"A report page needs one large number showing total revenue. Which visual is designed for that purpose?", opts:["Scatter chart","Map","Matrix","Card"], ans:3, explain:"A Card visual displays a single KPI or measure prominently, such as Total Revenue."},
+    {topic:"Creating Basic Visualisations", q:"In the visual field wells, where would you place Sales Amount for a bar chart comparing revenue by product category?", opts:["Values or X-axis value field","Tooltip only","Page filter only","Drill-through field only"], ans:0, explain:"The numeric measure belongs in the value field, while Product Category is used as the category axis."},
+
+    {topic:"Bar, Column & Pie Charts", q:"You need to compare revenue across 20 product categories with long category names. Which visual is usually easiest to read?", opts:["Pie chart","Gauge chart","Horizontal bar chart","Map"], ans:2, explain:"Horizontal bars handle long category labels and many categories better than pies or gauges."},
+    {topic:"Bar, Column & Pie Charts", q:"When is a pie or donut chart most defensible?", opts:["Showing 30 categories with tiny differences","Showing daily trend over two years","Showing row-level transactions","Showing a small part-to-whole breakdown such as 4 sales channels that add to 100 percent"], ans:3, explain:"Pie and donut charts are best kept to a small number of categories where the purpose is part-to-whole comparison."},
+
+    {topic:"Filters & Slicers - Introduction", q:"A page should let users choose Region interactively while viewing all visuals on that page. What should you add?", opts:["Calculated column","Slicer","Gateway","Deployment pipeline"], ans:1, explain:"A slicer is a report visual that lets users filter interactively, commonly affecting other visuals on the same page."},
+    {topic:"Filters & Slicers - Introduction", q:"You need a filter to apply to every page in a report. Which filter scope should you use?", opts:["Visual-level filter","Page-level filter","Report-level filter","Tooltip filter only"], ans:2, explain:"Report-level filters affect all report pages. Page-level filters affect one page, and visual-level filters affect one visual."},
+
+    {topic:"Building a Simple Dashboard", q:"A simple executive page should show revenue, profit margin, and order count before detailed charts. Which layout principle is best?", opts:["Place key KPI cards at the top, then supporting visuals below","Hide KPIs on a drill-through page only","Use one pie chart per metric","Use random colors for each visual"], ans:0, explain:"Executives usually need headline KPIs first, followed by context and detail. Consistent layout improves scanning."},
+    {topic:"Building a Simple Dashboard", q:"A dashboard page feels cluttered and users cannot tell what matters. What is the best fix?", opts:["Add more visuals","Use 3D effects","Remove all filters","Reduce to the core metrics and align visuals to a clear grid"], ans:3, explain:"A dashboard should prioritize the most important metrics and use clear alignment, spacing, and visual hierarchy."},
+    {topic:"Building a Simple Dashboard", q:"A manager wants to click a product category and have related charts update on the same report page. Which Power BI behaviour supports this?", opts:["Manual PDF export only","Changing the data type","Visual cross-filtering and cross-highlighting","Deleting relationships"], ans:2, explain:"Power BI visuals can interact so a selection in one visual filters or highlights related data in other visuals."},
+
+    {topic:"Publishing to Power BI Service", q:"After finishing a report in Power BI Desktop, where do you publish it for sharing and scheduled refresh setup?", opts:["A Power BI workspace in the Power BI service","The Windows Recycle Bin","Power Query Editor only","A local screenshot folder"], ans:0, explain:"Publishing sends the report and semantic model to a workspace in the Power BI service, where sharing, refresh, and app distribution can be configured."},
+    {topic:"Publishing to Power BI Service", q:"A published Import model uses cloud credentials that expired. What is the likely result?", opts:["All visuals become pie charts","Scheduled refresh fails until credentials are updated","The report automatically switches to DirectQuery","Rows are permanently deleted"], ans:1, explain:"Power BI service refresh needs valid credentials for the data source. Expired or missing credentials commonly cause refresh failures."}
+  ],
+
+  b2: [
+    {topic:"Power Query - Data Transformation", q:"A Power Query step filters a SQL table before loading it. Why is query folding valuable?", opts:["It pushes transformations back to the source when possible","It converts every model to DirectQuery","It creates report bookmarks","It disables credentials"], ans:0, explain:"Query folding lets supported transformations run in the source system, reducing data movement and improving refresh performance."},
+    {topic:"Power Query - Data Transformation", q:"A date column imported as text is used in time intelligence. What should you do in Power Query?", opts:["Leave it as text and format the visual only","Use a pie chart","Set the correct Date data type before loading","Remove the column"], ans:2, explain:"Date fields used for modelling and time intelligence should be typed as dates. Formatting alone does not change the underlying data type."},
+
+    {topic:"Merging & Appending Queries", q:"You have Sales_2025 and Sales_2026 with identical columns and need one combined table. Which Power Query operation fits?", opts:["Merge Queries","Group By only","Pivot Column","Append Queries"], ans:3, explain:"Append stacks rows from similarly structured tables. Merge joins columns from another table based on matching keys."},
+    {topic:"Merging & Appending Queries", q:"You need to add Customer Segment from a Customers query onto each Sales row using CustomerID. Which operation fits?", opts:["Merge Queries","Append Queries","Remove Rows","Unpivot Columns"], ans:0, explain:"Merge Queries performs a join by key, bringing related columns such as Customer Segment into the sales query."},
+
+    {topic:"Introduction to Data Modelling", q:"In a sales model, which table is most likely the fact table?", opts:["Products with one row per ProductKey","Calendar with one row per date","Sales transactions with OrderID, DateKey, ProductKey, Quantity, Amount","Customers with one row per CustomerID"], ans:2, explain:"Fact tables contain transactional or event measurements. Dimension tables describe entities like products, dates, and customers."},
+    {topic:"Introduction to Data Modelling", q:"Why is a star schema usually preferred for Power BI reports?", opts:["It requires every table to be one giant flat file","It separates facts from dimensions and simplifies relationships and DAX","It removes the need for measures","It prevents scheduled refresh"], ans:1, explain:"Star schemas generally improve usability and performance by connecting fact tables to clean dimensions with clear filter paths."},
+
+    {topic:"Relationships & Cardinality", q:"Sales has many rows per ProductID. Products has one row per ProductID. What relationship cardinality is typical?", opts:["One-to-one only","Many-to-many as the default","No relationship is allowed","Many-to-one from Sales to Products"], ans:3, explain:"Many sales rows relate to one product row, so the common relationship is many-to-one from the fact table to the dimension table."},
+    {topic:"Relationships & Cardinality", q:"A report gives double-counted totals because both Customer and Geography tables filter each other through multiple paths. What should you inspect first?", opts:["Relationship directions and ambiguity","Font family","Report title","Gateway machine name"], ans:0, explain:"Ambiguous or bidirectional filter paths can create confusing filter behaviour. Inspect relationship direction, active relationships, and model design."},
+
+    {topic:"Introduction to DAX", q:"Which DAX expression defines a simple revenue measure from a Sales table?", opts:["Revenue := SELECT * FROM Sales","Revenue = SUM(Sales[Amount])","Revenue = COUNTROWS(Customers[Name])","Revenue = FORMAT(Sales[Amount])"], ans:1, explain:"A measure can aggregate a numeric column with SUM. Measures are evaluated in the current filter context."},
+    {topic:"Introduction to DAX", q:"What is filter context in DAX?", opts:["The font formatting of a measure","The file path of the source workbook","A Power Query step list","The set of filters from visuals, slicers, relationships, and DAX expressions that affect a calculation"], ans:3, explain:"Filter context determines which rows are visible to a DAX expression. Slicers, visual axes, page filters, relationships, and CALCULATE can all shape it."},
+
+    {topic:"Calculated Columns vs Measures", q:"A model needs customer age group for every customer row and it rarely changes. Which is usually appropriate?", opts:["Measure only","Dashboard tile","Calculated column or Power Query column","Deployment pipeline"], ans:2, explain:"Row-level attributes used for slicing, such as age group, can be stored as columns. If possible, creating them upstream or in Power Query is often preferable."},
+    {topic:"Calculated Columns vs Measures", q:"You need profit margin to respond to slicers by Region and Year. Which object is best?", opts:["Static calculated column","Measure","Power Query parameter only","Report theme"], ans:1, explain:"Measures recalculate under the current filter context, making them the right choice for slicer-responsive metrics like margin."},
+
+    {topic:"DAX Functions: SUM, COUNT, AVERAGE", q:"Which measure counts the number of rows in the Orders table?", opts:["Order Count = COUNTROWS(Orders)","Order Count = SUM(Orders)","Order Count = AVERAGE(Orders[OrderID])","Order Count = DISTINCT(Orders)"], ans:0, explain:"COUNTROWS counts table rows. COUNT counts nonblank numeric values in a column, which is not always the same as counting orders."},
+    {topic:"DAX Functions: SUM, COUNT, AVERAGE", q:"A satisfaction column stores scores from 1 to 5. Which measure returns average satisfaction?", opts:["Avg Satisfaction = SUM(Survey[Score])","Avg Satisfaction = COUNT(Survey[Score])","Avg Satisfaction = AVERAGE(Survey[Score])","Avg Satisfaction = MAX(Survey)"], ans:2, explain:"AVERAGE returns the arithmetic mean of a numeric column, which fits a score field."},
+
+    {topic:"Time Intelligence Functions", q:"Why should a Power BI model usually include a dedicated Date table for time intelligence?", opts:["It makes every table DirectQuery","Time intelligence functions need a reliable calendar table and date relationships","It replaces all measures","It stores user passwords"], ans:1, explain:"A proper Date table gives consistent calendar logic for year, quarter, month, and time intelligence calculations."},
+    {topic:"Time Intelligence Functions", q:"A finance team needs year-to-date sales for the current filter context. Which DAX pattern is most appropriate?", opts:["FORMAT([Total Sales], 'YTD')","COUNTROWS('Date') only","TOTALYTD([Total Sales], 'Date'[Date])","DELETEFILTERS([Total Sales])"], ans:2, explain:"TOTALYTD evaluates an expression over dates from the start of the year through the current date context."},
+
+    {topic:"Advanced Visualisations", q:"A call center manager wants to understand which factors most influence customer churn. Which Power BI visual is designed for driver analysis?", opts:["Key influencers visual","Gauge visual","Card visual","Slicer visual"], ans:0, explain:"The Key influencers visual helps analyze factors that influence a selected metric, such as churn."},
+
+    {topic:"Maps, KPIs & Gauge Charts", q:"A map places cities in the wrong country because city names are ambiguous. What is the best fix?", opts:["Change the chart to pie only","Add country/region or latitude and longitude fields","Remove all filters","Use a calculated table for colors"], ans:1, explain:"Geographic fields need enough detail. Country/region or lat/long values reduce geocoding ambiguity."},
+    {topic:"Maps, KPIs & Gauge Charts", q:"A monthly revenue visual must show progress toward a target of 2 million. Which visual is commonly used for actual versus target?", opts:["Table with no measure","Map only","Gauge or KPI visual","Scatter chart with no axis"], ans:2, explain:"Gauge and KPI visuals are built for comparing an actual metric against a target or goal."},
+
+    {topic:"Drill-Through & Drill-Down", q:"A report needs users to right-click a Customer and open a customer detail page filtered to that customer. Which feature fits?", opts:["Theme switcher","Append Queries","Manage Roles","Drill-through"], ans:3, explain:"Drill-through pages use fields in the drill-through well so users can navigate to a detail page filtered by the selected value."},
+    {topic:"Drill-Through & Drill-Down", q:"A column chart has a hierarchy Year > Quarter > Month. Which feature lets users move from Year down to Month in the same visual?", opts:["Row-level security","Drill-down","Gateway refresh","Publish to web"], ans:1, explain:"Drill-down lets users navigate levels in a hierarchy inside the same visual."},
+
+    {topic:"Bookmarks & Page Navigation", q:"A designer wants a button to switch between a summary view and a detail view on the same report page. Which feature can capture visual visibility states?", opts:["COUNTROWS","Data gateway","Bookmarks with selection pane","Relationship cardinality"], ans:2, explain:"Bookmarks can capture report page state, including filters and visual visibility when configured with the Selection pane."},
+    {topic:"Bookmarks & Page Navigation", q:"A report needs a Home button that takes users back to the overview page. What should you configure?", opts:["Calculated column","RLS role","Append query","Button action set to Page navigation"], ans:3, explain:"Power BI buttons can use page navigation actions to move users between report pages."},
+
+    {topic:"Row-Level Security (RLS)", q:"A regional manager should only see rows where Sales[Region] = 'West'. Where is the row filter normally defined?", opts:["In a role using a DAX table filter expression","In the report title","In the gateway installer","In the color theme"], ans:0, explain:"RLS roles use DAX filters on model tables. After publishing, users or groups are assigned to those roles in the service."},
+
+    {topic:"Power BI Service & Workspaces", q:"A team wants to collaborate on reports and then distribute a read-only packaged experience to business users. What combination is typical?", opts:["Personal bookmarks only","Local PBIX folder only","Workspace for collaboration, Power BI app for distribution","Power Query Editor for distribution"], ans:2, explain:"Workspaces are collaboration containers. Apps are commonly used to distribute curated content to viewers."}
+  ],
+
+  b3: [
+    {topic:"Advanced DAX: CALCULATE & FILTER", q:"What is the primary purpose of CALCULATE in DAX?", opts:["Change a column data type in Power Query","Publish a report to a workspace","Evaluate an expression in a modified filter context","Create a gateway connection"], ans:2, explain:"CALCULATE evaluates an expression after applying, replacing, or removing filters in the filter context."},
+    {topic:"Advanced DAX: CALCULATE & FILTER", q:"A measure must calculate sales for only the Online channel regardless of the visual's Channel selection. Which DAX pattern fits?", opts:["CALCULATE([Sales], Sales[Channel] = 'Online')","SUMX(Customers, Customers[Name])","FORMAT([Sales], 'Online')","RELATEDTABLE('Date')"], ans:0, explain:"CALCULATE can modify filter context by applying a filter such as Sales[Channel] = 'Online'."},
+
+    {topic:"RANKX, TOPN & Iterators", q:"A report needs product ranking by revenue within the current slicer selection. Which function is designed for ranking?", opts:["CONCATENATE","DATEADD","PATH","RANKX"], ans:3, explain:"RANKX ranks values over a table expression. The table and measure used determine whether ranking respects slicers."},
+    {topic:"RANKX, TOPN & Iterators", q:"You need the top 10 customers by total sales as a table expression inside a measure. Which DAX function is most relevant?", opts:["TOPN","LOWER","COUNTBLANK","USERNAME"], ans:0, explain:"TOPN returns the top N rows from a table according to an order expression, such as [Total Sales]."},
+
+    {topic:"DAX Variables & Context Transition", q:"Why use VAR in a complex DAX measure?", opts:["To create a Power Query step","To store intermediate results, improve readability, and avoid repeating expressions","To publish a dashboard","To bypass model relationships"], ans:1, explain:"Variables make DAX easier to read and can prevent repeated evaluation of the same expression."},
+    {topic:"DAX Variables & Context Transition", q:"When does context transition occur in DAX?", opts:["When row context is transformed into filter context, commonly by CALCULATE","When a report is exported to PDF","When a slicer changes color","When a CSV file is renamed"], ans:0, explain:"CALCULATE can transform an existing row context into filter context. This is central to many calculated column and iterator behaviours."},
+
+    {topic:"Advanced Data Modelling", q:"A model has Budget by Month and Product Category, while Actuals are daily by Product. What is the modelling issue?", opts:["Too many report themes","Missing bookmark action","Different grain between fact tables","Wrong chart font"], ans:2, explain:"Budget and Actuals are at different grains. The model should handle shared dimensions carefully to avoid incorrect comparisons."},
+    {topic:"Advanced Data Modelling", q:"Which modelling practice usually improves both DAX clarity and report performance?", opts:["Expose every staging column to report users","Hide technical key columns and expose business-friendly fields and measures","Use bidirectional filters everywhere","Put all fields into one flat table always"], ans:1, explain:"A clean semantic model hides implementation details and exposes curated dimensions, hierarchies, and measures."},
+
+    {topic:"Star Schema & Snowflake Schema", q:"In a star schema, what sits at the center?", opts:["Many unrelated lookup tables","A report bookmark","A deployment pipeline","Fact table connected to denormalized dimensions"], ans:3, explain:"A star schema centers on fact tables with surrounding dimension tables that filter the facts."},
+    {topic:"Star Schema & Snowflake Schema", q:"Compared with a snowflake schema, why is a star schema often preferred in Power BI?", opts:["It prevents all data refreshes","It removes the need for DAX","Fewer relationship hops and simpler fields for report authors","It can only store text columns"], ans:2, explain:"Flattened dimensions in a star schema reduce relationship complexity and are easier for report authors to use."},
+
+    {topic:"Composite Models & Aggregations", q:"A model combines imported Excel targets with DirectQuery warehouse sales. What is this generally called?", opts:["Composite model","Paginated report","Bookmark group","RLS role"], ans:0, explain:"Composite models can combine different storage modes or sources in one semantic model."},
+    {topic:"Composite Models & Aggregations", q:"A DirectQuery fact table is slow, but executives mostly query totals by Month and Region. What can improve performance?", opts:["Use more pie charts","Remove all relationships","Disable the Date table","Create aggregation tables at Month and Region grain and map them to detail data"], ans:3, explain:"Aggregations let Power BI answer high-level queries from smaller pre-aggregated tables instead of scanning detail rows."},
+
+    {topic:"Power BI & Python / R Integration", q:"What is a common valid use of Python or R in Power BI?", opts:["Replacing all relationships automatically","Managing workspace roles","Running a custom statistical or data science visual/script when enabled","Creating deployment pipelines"], ans:2, explain:"Power BI can use Python or R scripts for data transformation and visuals when configured, useful for specialized analytics."},
+    {topic:"Power BI & Python / R Integration", q:"A Python visual works in Desktop but fails in the service because a package is unsupported. What is the likely cause?", opts:["Python visuals never work in Power BI","The service only supports certain packages and execution constraints","The model has too many measures","A slicer is selected"], ans:1, explain:"Python and R execution in the service has package and environment limitations, so Desktop behaviour must be validated before publishing."},
+
+    {topic:"Paginated Reports (SSRS)", q:"A finance team needs a pixel-perfect invoice-style report that prints across many pages. Which Power BI artifact fits best?", opts:["Donut chart","Slicer","Bookmark navigator","Paginated report"], ans:3, explain:"Paginated reports are designed for highly formatted, print-ready operational reports that can span many pages."},
+
+    {topic:"Power BI Embedded & API", q:"A SaaS product wants to show Power BI reports inside its own web app for customers. Which capability is most relevant?", opts:["Power Query Group By","Personal bookmarks only","Power BI Embedded","Desktop relationship view"], ans:2, explain:"Power BI Embedded supports embedding Power BI analytics into custom applications."},
+    {topic:"Power BI Embedded & API", q:"An operations team wants to automate refreshing a semantic model after an external pipeline finishes. Which option is most relevant?", opts:["Manual screenshot export","Power BI REST API or Fabric/Power BI automation","Gauge chart target","Report theme JSON only"], ans:1, explain:"Power BI REST APIs and automation tooling can trigger refreshes and manage content programmatically, subject to permissions and capacity limits."},
+
+    {topic:"Dataflows & Datamarts", q:"A company wants reusable Power Query transformations shared by multiple semantic models. Which item is designed for reusable cloud data preparation?", opts:["Report bookmark","Gauge visual","Calculated column only","Dataflow"], ans:3, explain:"Dataflows store reusable Power Query transformations in the service so multiple models can consume prepared data."},
+    {topic:"Dataflows & Datamarts", q:"As of 2026, a team still using Power BI datamarts should plan what path?", opts:["Migrate datamarts to Fabric Warehouse or a supported architecture","Create more datamarts because they are the preferred new default","Use only pie charts","Move RLS rules into report titles"], ans:0, explain:"Microsoft has announced Power BI datamarts are no longer supported after November 1, 2025, so teams should migrate to supported Fabric warehouse patterns or other supported data stores."},
+
+    {topic:"Deployment Pipelines (Dev/Test/Prod)", q:"What is the main purpose of deployment pipelines in Power BI/Fabric?", opts:["Create a bar chart automatically","Move content through development, test, and production stages with controlled deployment","Replace every workspace role","Compress CSV files"], ans:1, explain:"Deployment pipelines help manage lifecycle promotion across stages such as Dev, Test, and Prod."},
+    {topic:"Deployment Pipelines (Dev/Test/Prod)", q:"After deploying a semantic model to a new pipeline stage, why might a refresh still be required?", opts:["All reports become deleted","DAX measures are converted to M","The model loses every table","Deployment copies metadata, but data is not necessarily copied"], ans:3, explain:"Deployment pipelines copy item metadata and structure; refresh may be required in the target stage to populate or update data."},
+
+    {topic:"Performance Optimisation", q:"A report page is slow because it has many high-cardinality visuals and heavy DAX. What should you use first to identify bottlenecks?", opts:["Theme gallery","Publish to web","Performance Analyzer in Power BI Desktop","Rename pages randomly"], ans:2, explain:"Performance Analyzer helps measure visual query and rendering times so you can identify slow visuals and measures."},
+    {topic:"Performance Optimisation", q:"Which change usually helps model performance?", opts:["Remove unused columns and reduce high-cardinality fields where possible","Keep every source column just in case","Use bidirectional relationships everywhere","Turn all measures into text"], ans:0, explain:"Smaller, cleaner models generally compress and query better. Unused columns and high-cardinality text fields can hurt performance."},
+
+    {topic:"Power BI Admin & Governance", q:"An organization wants certified datasets, controlled sharing, and tenant-wide settings. Who typically manages these governance controls?", opts:["Only report viewers","Only external guests","No one; governance is automatic","Power BI/Fabric administrators with workspace owners and data stewards"], ans:3, explain:"Governance usually combines tenant settings, workspace roles, endorsement, sensitivity labels, and stewardship processes."},
+
+    {topic:"Power BI & Azure Synapse / Fabric", q:"A team wants lakehouse, warehouse, data engineering, real-time analytics, and Power BI in one SaaS analytics platform. Which Microsoft platform is aligned with this?", opts:["Windows Notepad","PowerPoint only","Microsoft Fabric","Local CSV folders only"], ans:2, explain:"Microsoft Fabric brings multiple analytics workloads together, including Power BI, data engineering, data warehousing, and lakehouse patterns."}
+  ]
+};
+
+const labels = { b1:"Basic - B1", b2:"Intermediate - B2", b3:"Advanced - B3" };
+const levels = ["b1", "b2", "b3"];
+const letters = ["A", "B", "C", "D"];
+const state = { level:"b1", qi:0, answers:{}, selected:{}, correct:0, answered:0, streak:0 };
+
+function initLevel(level) {
+  if (!state.answers[level]) state.answers[level] = new Array(questions[level].length).fill(null);
+}
+
+function render() {
+  const level = state.level;
+  const qs = questions[level];
+  const ans = state.answers[level];
+  const q = qs[state.qi];
+  const done = ans.filter(Boolean).length;
+  document.getElementById("level-label").textContent = labels[level];
+  document.getElementById("q-count").textContent = `${state.qi + 1} / ${qs.length}`;
+  document.getElementById("progress-bar").style.width = `${Math.max(4, done / qs.length * 100)}%`;
+  const dots = document.getElementById("progress-dots");
+  dots.innerHTML = "";
+  ans.forEach((a, i) => {
+    const d = document.createElement("div");
+    d.className = "dot" + (i === state.qi ? " current" : "") + (a ? " " + a : "");
+    d.title = `Q${i + 1}`;
+    d.onclick = () => { state.qi = i; render(); };
+    dots.appendChild(d);
+  });
+  document.getElementById("q-topic").textContent = q.topic;
+  document.getElementById("q-num").textContent = `Q${state.qi + 1}`;
+  document.getElementById("q-text").innerHTML = q.q;
+  const optEl = document.getElementById("options");
+  optEl.innerHTML = "";
+  const answered = ans[state.qi] !== null;
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    let cls = "option";
+    if (answered) {
+      if (i === q.ans) cls += " correct";
+      else if (ans[state.qi] === "wrong" && state.selected[`${level}-${state.qi}`] === i) cls += " wrong";
+      btn.disabled = true;
+    }
+    btn.className = cls;
+    btn.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    if (!answered) btn.onclick = () => pick(i);
+    optEl.appendChild(btn);
+  });
+  const fb = document.getElementById("feedback");
+  if (ans[state.qi] === "correct") { fb.className = "feedback show good"; fb.innerHTML = `<strong>Correct.</strong> ${q.explain}`; }
+  else if (ans[state.qi] === "wrong") { fb.className = "feedback show bad"; fb.innerHTML = `<strong>Correct answer: ${letters[q.ans]}.</strong> ${q.explain}`; }
+  else if (ans[state.qi] === "skipped") { fb.className = "feedback show bad"; fb.innerHTML = `<strong>Skipped. Correct answer: ${letters[q.ans]}.</strong> ${q.explain}`; }
+  else { fb.className = "feedback"; fb.innerHTML = ""; }
+  document.getElementById("btn-next").disabled = !answered;
+  document.getElementById("btn-skip").disabled = answered;
+  document.getElementById("btn-next").textContent = ans.every(Boolean) ? "See Results" : "Next";
+  document.getElementById("global-score").textContent = `${state.correct} / ${state.answered}`;
+  document.getElementById("global-streak").textContent = state.streak;
+}
+
+function pick(i) {
+  const level = state.level;
+  const q = questions[level][state.qi];
+  const ok = i === q.ans;
+  state.answers[level][state.qi] = ok ? "correct" : "wrong";
+  state.selected[`${level}-${state.qi}`] = i;
+  state.answered += 1;
+  if (ok) { state.correct += 1; state.streak += 1; } else { state.streak = 0; }
+  render();
+}
+
+function skipQuestion() {
+  const ans = state.answers[state.level];
+  if (ans[state.qi] === null) { ans[state.qi] = "skipped"; state.answered += 1; state.streak = 0; }
+  render();
+}
+
+function nextQuestion() {
+  const ans = state.answers[state.level];
+  if (ans.every(Boolean)) { showResults(); return; }
+  let next = (state.qi + 1) % ans.length;
+  while (ans[next]) next = (next + 1) % ans.length;
+  state.qi = next;
+  render();
+}
+
+function showResults() {
+  const level = state.level;
+  const ans = state.answers[level];
+  const total = ans.length;
+  const correct = ans.filter(a => a === "correct").length;
+  const wrong = ans.filter(a => a === "wrong").length;
+  const skipped = ans.filter(a => a === "skipped").length;
+  const pct = Math.round(correct / total * 100);
+  document.getElementById("question-card").style.display = "none";
+  document.getElementById("results").className = "results show";
+  document.getElementById("result-score").textContent = correct;
+  document.getElementById("result-denom").textContent = `/ ${total}`;
+  document.getElementById("res-correct").textContent = correct;
+  document.getElementById("res-wrong").textContent = wrong;
+  document.getElementById("res-skipped").textContent = skipped;
+  document.getElementById("score-ring").className = "score-ring " + (pct >= 80 ? "" : pct >= 60 ? "avg" : "low");
+  document.getElementById("results-title").textContent = pct >= 80 ? "Excellent" : pct >= 60 ? "Good Effort" : "Keep Practising";
+  document.getElementById("results-msg").textContent = `You scored ${correct}/${total} (${pct}%)`;
+  document.getElementById("btn-next-level").style.display = levels.indexOf(level) < levels.length - 1 ? "" : "none";
+  document.getElementById(`tab-${level}`).classList.add("done");
+  const stats = {};
+  questions[level].forEach((q, i) => {
+    if (!stats[q.topic]) stats[q.topic] = { c:0, t:0 };
+    stats[q.topic].t += 1;
+    if (ans[i] === "correct") stats[q.topic].c += 1;
+  });
+  document.getElementById("topic-breakdown").innerHTML = Object.entries(stats).map(([t, s]) =>
+    `<div class="topic-row"><span>${t}</span><strong>${s.c}/${s.t}</strong></div>`).join("");
+}
+
+function retryLevel() {
+  const level = state.level;
+  state.answers[level] = new Array(questions[level].length).fill(null);
+  recalcGlobal();
+  state.qi = 0;
+  document.getElementById(`tab-${level}`).classList.remove("done");
+  document.getElementById("results").className = "results";
+  document.getElementById("question-card").style.display = "";
+  render();
+}
+
+function recalcGlobal() {
+  state.correct = 0; state.answered = 0; state.streak = 0;
+  Object.values(state.answers).forEach(arr => arr.forEach(a => { if (a) { state.answered += 1; if (a === "correct") state.correct += 1; } }));
+}
+
+function switchLevel(level) {
+  state.level = level; state.qi = 0; initLevel(level);
+  document.querySelectorAll(".level-tab").forEach(t => t.classList.remove("active"));
+  document.getElementById(`tab-${level}`).classList.add("active");
+  document.getElementById("results").className = "results";
+  document.getElementById("question-card").style.display = "";
+  if (state.answers[level].every(Boolean)) showResults(); else render();
+}
+
+function nextLevel() {
+  const i = levels.indexOf(state.level);
+  if (i < levels.length - 1) switchLevel(levels[i + 1]);
+}
+
+function toggleTheme() {
+  const root = document.documentElement;
+  const dark = root.getAttribute("data-theme") === "dark";
+  root.setAttribute("data-theme", dark ? "light" : "dark");
+  document.querySelector(".theme-btn").textContent = dark ? "Dark" : "Light";
+}
+
+initLevel("b1");
+render();
+  </script>
+</body>
+</html>
